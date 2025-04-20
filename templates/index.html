@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictor de Precios de Laptops</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="gradient-bg text-white p-6 shadow-lg">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold">Predictor de Precios de Laptops</h1>
+            <p class="mt-2 opacity-80">Basado en aprendizaje automático - Ingrese las características de la laptop para predecir su precio</p>
+        </div>
+    </header>
+
+    <nav class="bg-white shadow">
+        <div class="container mx-auto p-4 flex space-x-4">
+            <a href="/" class="font-semibold text-blue-700 hover:text-blue-900">Inicio</a>
+            <a href="/model_info" class="text-gray-600 hover:text-blue-700">Información del Modelo</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-8 px-4">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Ingrese las características de la laptop</h2>
+
+            <form action="/predict" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Peso -->
+                <div>
+                    <label for="weight" class="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
+                    <input type="number" id="weight" name="weight" step="0.01" min="0.5" max="5"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                           required value="1.8">
+                </div>
+
+                <!-- RAM -->
+                <div>
+                    <label for="ram" class="block text-sm font-medium text-gray-700 mb-1">RAM (GB)</label>
+                    <input type="number" id="ram" name="ram" min="2" max="64"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                           required value="8">
+                </div>
+
+                <!-- Tipo Gaming -->
+                <div>
+                    <label for="is_gaming" class="block text-sm font-medium text-gray-700 mb-1">¿Es Gaming?</label>
+                    <select id="is_gaming" name="is_gaming"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option value="0">No</option>
+                        <option value="1">Sí</option>
+                    </select>
+                </div>
+
+                <!-- Tipo Notebook -->
+                <div>
+                    <label for="is_notebook" class="block text-sm font-medium text-gray-700 mb-1">¿Es Notebook?</label>
+                    <select id="is_notebook" name="is_notebook"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option value="1">Sí</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+
+                <!-- Resolución de Pantalla -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Resolución de Pantalla</label>
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <input type="number" id="screen_width" name="screen_width" min="1024" max="3840"
+                                   placeholder="Ancho (px)" class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                   required value="1920">
+                        </div>
+                        <div class="text-gray-500 flex items-center">x</div>
+                        <div class="flex-1">
+                            <input type="number" id="screen_height" name="screen_height" min="768" max="2160"
+                                   placeholder="Alto (px)" class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                   required value="1080">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CPU GHz -->
+                <div class="md:col-span-2">
+                    <label for="ghz" class="block text-sm font-medium text-gray-700 mb-1">Velocidad del Procesador (GHz)</label>
+                    <input type="number" id="ghz" name="ghz" step="0.1" min="1.0" max="5.0"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                           required value="2.5">
+                </div>
+
+                <div class="md:col-span-2">
+                    <button type="submit" class="w-full md:w-auto px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-semibold">
+                        Predecir Precio
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Acerca del Modelo</h2>
+            <p class="mb-4">Este predictor utiliza un modelo de regresión lineal entrenado con datos de laptops comerciales.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600">Error Absoluto Medio:</p>
+                    <p class="text-2xl font-bold text-blue-700">{{ mae }} €</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600">Coeficiente de Determinación (R²):</p>
+                    <p class="text-2xl font-bold text-blue-700">{{ r2 }}</p>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="/model_info" class="text-blue-600 hover:text-blue-800">
+                    Ver detalles completos del modelo →
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-4">
+            <p class="text-center opacity-80">Proyecto de Diseño de Software - URP 2025</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información del Modelo - Predictor de Laptops</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="gradient-bg text-white p-6 shadow-lg">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold">Predictor de Precios de Laptops</h1>
+            <p class="mt-2 opacity-80">Información técnica del modelo de predicción</p>
+        </div>
+    </header>
+
+    <nav class="bg-white shadow">
+        <div class="container mx-auto p-4 flex space-x-4">
+            <a href="/" class="text-gray-600 hover:text-blue-700">Inicio</a>
+            <a href="/model_info" class="font-semibold text-blue-700">Información del Modelo</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-8 px-4">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6">Detalles del Modelo</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Metrics -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Métricas de Rendimiento</h3>
+
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600">Error Absoluto Medio (MAE)</p>
+                            <p class="text-3xl font-bold text-blue-700">{{ mae }} €</p>
+                            <p class="text-xs text-gray-500 mt-1">
+                                El MAE mide la diferencia promedio entre las predicciones y los valores reales.
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm text-gray-600">Coeficiente de Determinación (R²)</p>
+                            <p class="text-3xl font-bold text-blue-700">{{ r2 }}</p>
+                            <p class="text-xs text-gray-500 mt-1">
+                                El R² indica qué porcentaje de la variación en el precio puede ser explicado por las características.
+                                Un valor más cercano a 1 indica un mejor ajuste.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold mb-3">Información del Modelo</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li><span class="font-medium">Tipo:</span> Regresión Lineal</li>
+                            <li><span class="font-medium">Características:</span> 7</li>
+                            <li><span class="font-medium">Datos de entrenamiento:</span> 85% del dataset</li>
+                            <li><span class="font-medium">Datos de prueba:</span> 15% del dataset</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Importancia de Características</h3>
+                    <div class="bg-white border rounded-lg p-4">
+                        <canvas id="featureImportanceChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature table -->
+            <div class="mt-10">
+                <h3 class="text-xl font-semibold mb-4">Detalle de Coeficientes</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="py-2 px-4 text-left">Característica</th>
+                                <th class="py-2 px-4 text-left">Coeficiente</th>
+                                <th class="py-2 px-4 text-left">Impacto</th>
+                                <th class="py-2 px-4 text-left">Interpretación</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for feature in feature_importances %}
+                            <tr>
+                                <td class="py-3 px-4">{{ feature.feature }}</td>
+                                <td class="py-3 px-4">{{ feature.importance }}</td>
+                                <td class="py-3 px-4">
+                                    {% if feature.importance|float > 0 %}
+                                    <span class="text-green-600">Positivo</span>
+                                    {% else %}
+                                    <span class="text-red-600">Negativo</span>
+                                    {% endif %}
+                                </td>
+                                <td class="py-3 px-4">
+                                    {% if feature.feature == 'Weight' %}
+                                    Cada kg adicional incrementa/reduce el precio en {{ feature.importance }} €
+                                    {% elif feature.feature == 'TypeName_Gaming' %}
+                                    Ser una laptop gaming incrementa/reduce el precio en {{ feature.importance }} €
+                                    {% elif feature.feature == 'TypeName_Notebook' %}
+                                    Ser un notebook incrementa/reduce el precio en {{ feature.importance }} €
+                                    {% elif feature.feature == 'screen_width' %}
+                                    Cada píxel adicional de ancho incrementa/reduce el precio en {{ feature.importance }} €
+                                    {% elif feature.feature == 'screen_height' %}
+                                    Cada píxel adicional de alto incrementa/reduce el precio en {{ feature.importance }} €
+                                    {% elif feature.feature == 'GHz' %}
+                                    Cada GHz adicional incrementa/reduce el precio en {{ feature.importance }} €
+                                    {% elif feature.feature == 'Ram' %}
+                                    Cada GB de RAM adicional incrementa/reduce el precio en {{ feature.importance }} €
+                                    {% else %}
+                                    Esta característica incrementa/reduce el precio en {{ feature.importance }} €
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-4">
+            <p class="text-center opacity-80">Proyecto de Diseño de Software - URP 2025</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Feature importance chart
+            const features = [];
+            const importances = [];
+            const backgroundColors = [];
+
+            {% for feature in feature_importances %}
+            features.push('{{ feature.feature }}');
+            importances.push({{ feature.importance }});
+            backgroundColors.push({{ feature.importance|float > 0 ? "'rgba(52, 211, 153, 0.7)'" : "'rgba(248, 113, 113, 0.7)'" }});
+            {% endfor %}
+
+            const ctx = document.getElementById('featureImportanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: features,
+                    datasets: [{
+                        label: 'Coeficiente',
+                        data: importances,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors.map(color => color.replace('0.7', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Coeficiente: ${context.raw}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Valor del Coeficiente'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
