@@ -23,6 +23,7 @@
         <div class="container mx-auto p-4 flex space-x-4">
             <a href="/" class="font-semibold text-blue-700 hover:text-blue-900">Inicio</a>
             <a href="/model_info" class="text-gray-600 hover:text-blue-700">Información del Modelo</a>
+            <a href="/visualizations" class="text-gray-600 hover:text-blue-700">Visualizaciones</a>
         </div>
     </nav>
 
@@ -103,16 +104,16 @@
 
         <div class="bg-white rounded-lg shadow-lg p-6">
             <h2 class="text-xl font-bold mb-4">Acerca del Modelo</h2>
-            <p class="mb-4">Este predictor utiliza un modelo de regresión lineal entrenado con datos de laptops comerciales.</p>
+            <p class="mb-4">Este predictor utiliza un modelo de <strong id="modelNameText">{{ model_name }}</strong> entrenado con datos de laptops comerciales.</p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <p class="text-sm text-gray-600">Error Absoluto Medio:</p>
-                    <p class="text-2xl font-bold text-blue-700">{{ mae }} €</p>
+                    <p class="text-2xl font-bold text-blue-700" id="maeValue">{{ mae }} €</p>
                 </div>
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <p class="text-sm text-gray-600">Coeficiente de Determinación (R²):</p>
-                    <p class="text-2xl font-bold text-blue-700">{{ r2 }}</p>
+                    <p class="text-2xl font-bold text-blue-700" id="r2Value">{{ r2 }}</p>
                 </div>
             </div>
 
@@ -122,12 +123,193 @@
                 </a>
             </div>
         </div>
+
+        <!-- New section for model selection -->
+        <div class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-bold mb-4">Configuración del Modelo</h2>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2">Seleccionar Tipo de Modelo</h3>
+                <div class="flex space-x-4">
+                    <button onclick="changeModel('linear')" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+                        Regresión Lineal
+                    </button>
+                    <button onclick="changeModel('random_forest')" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
+                        Random Forest
+                    </button>
+                </div>
+                <div id="modelChangeStatus" class="mt-2 text-sm"></div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2">Configuraciones Predefinidas</h3>
+                <div class="flex space-x-4">
+                    <button onclick="useModelConfig('basic_linear')" class="px-4 py-2 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition">
+                        Regresión Básica
+                    </button>
+                    <button onclick="useModelConfig('optimized_rf')" class="px-4 py-2 bg-green-100 text-green-800 rounded hover:bg-green-200 transition">
+                        Random Forest Optimizado
+                    </button>
+                    <button onclick="useModelConfig('reduced_features')" class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 transition">
+                        Características Reducidas
+                    </button>
+                </div>
+                <div id="configStatus" class="mt-2 text-sm"></div>
+            </div>
+        </div>
+
+        <!-- Model comparison section -->
+        <div id="modelComparison" class="mt-8 bg-white p-6 rounded-lg shadow-lg" style="display: none">
+            <h2 class="text-xl font-bold mb-4">Comparación de Modelos</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="py-2 px-4 text-left">Modelo</th>
+                            <th class="py-2 px-4 text-left">MAE</th>
+                            <th class="py-2 px-4 text-left">R²</th>
+                            <th class="py-2 px-4 text-left">Características</th>
+                            <th class="py-2 px-4 text-left">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonTableBody" class="divide-y divide-gray-200">
+                        <!-- Data will be inserted here via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </main>
 
     <footer class="gradient-bg text-white py-8">
         <div class="container mx-auto px-4">
-            <p class="text-center opacity-80">Proyecto de Diseño de Software - URP 2025</p>
+            <p class="text-center opacity-80"></p>
         </div>
     </footer>
+
+    <script>
+        // Add these functions to handle model selection and configuration
+        async function changeModel(modelType) {
+            const statusElem = document.getElementById('modelChangeStatus');
+            statusElem.textContent = "Cambiando modelo...";
+            statusElem.className = "mt-2 text-sm text-blue-500";
+
+            try {
+                const response = await fetch(`/change_model/${modelType}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusElem.textContent = data.message;
+                    statusElem.className = "mt-2 text-sm text-green-500";
+
+                    // Update the model description text
+                    const modelNameElement = document.getElementById('modelNameText');
+                    if (modelNameElement) {
+                        if (modelType === 'linear') {
+                            modelNameElement.textContent = 'Regresión Lineal';
+                        } else if (modelType === 'random_forest') {
+                            modelNameElement.textContent = 'Random Forest';
+                        }
+                    }
+
+                    // Update metrics
+                    const maeElement = document.getElementById('maeValue');
+                    const r2Element = document.getElementById('r2Value');
+                    if (maeElement && r2Element && data.mae && data.r2) {
+                        // Format values to 2 decimal places
+                        const formattedMae = parseFloat(data.mae).toFixed(2);
+                        const formattedR2 = parseFloat(data.r2).toFixed(2);
+                        maeElement.textContent = formattedMae + ' €';
+                        r2Element.textContent = formattedR2;
+                    }
+
+                    updateModelComparison();
+                } else {
+                    throw new Error(data.message || "Error al cambiar el modelo");
+                }
+            } catch (error) {
+                statusElem.textContent = error.message;
+                statusElem.className = "mt-2 text-sm text-red-500";
+            }
+        }
+
+        async function useModelConfig(configName) {
+            const statusElem = document.getElementById('configStatus');
+            statusElem.textContent = "Aplicando configuración...";
+            statusElem.className = "mt-2 text-sm text-blue-500";
+
+            try {
+                const response = await fetch(`/use_model_config/${configName}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusElem.textContent = data.message;
+                    statusElem.className = "mt-2 text-sm text-green-500";
+
+                    // Update the model description text based on the configuration
+                    const modelNameElement = document.getElementById('modelNameText');
+                    if (modelNameElement) {
+                        if (configName.includes('linear')) {
+                            modelNameElement.textContent = 'Regresión Lineal';
+                        } else if (configName.includes('rf')) {
+                            modelNameElement.textContent = 'Random Forest';
+                        }
+                    }
+
+                    // Update metrics
+                    const maeElement = document.getElementById('maeValue');
+                    const r2Element = document.getElementById('r2Value');
+                    if (maeElement && r2Element && data.mae && data.r2) {
+                        // Format values to 2 decimal places
+                        const formattedMae = parseFloat(data.mae).toFixed(2);
+                        const formattedR2 = parseFloat(data.r2).toFixed(2);
+                        maeElement.textContent = formattedMae + ' €';
+                        r2Element.textContent = formattedR2;
+                    }
+
+                    updateModelComparison();
+                } else {
+                    throw new Error(data.error || "Error al aplicar la configuración");
+                }
+            } catch (error) {
+                statusElem.textContent = error.message;
+                statusElem.className = "mt-2 text-sm text-red-500";
+            }
+        }
+
+        async function updateModelComparison() {
+            try {
+                const response = await fetch('/model_comparison');
+                const data = await response.json();
+
+                if (response.ok) {
+                    const tableBody = document.getElementById('comparisonTableBody');
+                    tableBody.innerHTML = '';
+
+                    data.models.forEach(model => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="py-2 px-4">${model.name}</td>
+                            <td class="py-2 px-4">${model.mae}</td>
+                            <td class="py-2 px-4">${model.r2}</td>
+                            <td class="py-2 px-4">${model.features}</td>
+                            <td class="py-2 px-4">
+                                ${model.active ?
+                                    '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">Activo</span>' :
+                                    '<span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">Inactivo</span>'}
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+
+                    document.getElementById('modelComparison').style.display = 'block';
+                }
+            } catch (error) {
+                console.error("Error updating model comparison:", error);
+            }
+        }
+
+        // Load model comparison when page loads
+        document.addEventListener('DOMContentLoaded', updateModelComparison);
+    </script>
 </body>
 </html>

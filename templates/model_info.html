@@ -24,6 +24,7 @@
         <div class="container mx-auto p-4 flex space-x-4">
             <a href="/" class="text-gray-600 hover:text-blue-700">Inicio</a>
             <a href="/model_info" class="font-semibold text-blue-700">Información del Modelo</a>
+            <a href="/visualizations" class="text-gray-600 hover:text-blue-700">Visualizaciones</a>
         </div>
     </nav>
 
@@ -58,8 +59,8 @@
                     <div class="mt-6">
                         <h3 class="text-lg font-semibold mb-3">Información del Modelo</h3>
                         <ul class="space-y-2 text-gray-700">
-                            <li><span class="font-medium">Tipo:</span> Regresión Lineal</li>
-                            <li><span class="font-medium">Características:</span> 7</li>
+                            <li><span class="font-medium">Tipo:</span> {{ model_name }}</li>
+                            <li><span class="font-medium">Características:</span> {{ features_count }}</li>
                             <li><span class="font-medium">Datos de entrenamiento:</span> 85% del dataset</li>
                             <li><span class="font-medium">Datos de prueba:</span> 15% del dataset</li>
                         </ul>
@@ -130,7 +131,7 @@
 
     <footer class="gradient-bg text-white py-8">
         <div class="container mx-auto px-4">
-            <p class="text-center opacity-80">Proyecto de Diseño de Software - URP 2025</p>
+            <p class="text-center opacity-80"></p>
         </div>
     </footer>
 
@@ -144,7 +145,11 @@
             {% for feature in feature_importances %}
             features.push('{{ feature.feature }}');
             importances.push({{ feature.importance }});
-            backgroundColors.push({{ feature.importance|float > 0 ? "'rgba(52, 211, 153, 0.7)'" : "'rgba(248, 113, 113, 0.7)'" }});
+            {% if feature.importance|float > 0 %}
+            backgroundColors.push('rgba(52, 211, 153, 0.7)');
+            {% else %}
+            backgroundColors.push('rgba(248, 113, 113, 0.7)');
+            {% endif %}
             {% endfor %}
 
             const ctx = document.getElementById('featureImportanceChart').getContext('2d');

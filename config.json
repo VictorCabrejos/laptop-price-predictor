@@ -1,0 +1,18 @@
+{
+    "dataset_path": "laptop_price.csv",
+    "encoding": "ISO-8859-1",
+    "test_size": 0.15,
+    "random_state": 42,
+    "features": [
+        "Weight",
+        "TypeName_Gaming",
+        "TypeName_Notebook",
+        "screen_width",
+        "screen_height",
+        "GHz",
+        "Ram"
+    ],
+    "target": "Price_euros",
+    "model_type": "random_forest",
+    "static_dir": "static"
+}

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizaciones de Datos - Predictor de Precios de Laptops</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+        }
+        .visualization-card {
+            transition: transform 0.2s;
+        }
+        .visualization-card:hover {
+            transform: scale(1.02);
+        }
+
+        /* Modal/Lightbox styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.85);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.show {
+            display: block;
+            opacity: 1;
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 85vh;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .modal-close:hover {
+            color: #bbb;
+        }
+        .modal-caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 50px;
+        }
+        .viz-img {
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .viz-img:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="gradient-bg text-white p-6 shadow-lg">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold">Análisis de Datos - Laptops</h1>
+            <p class="mt-2 opacity-80">Visualizaciones para análisis de precios de laptops</p>
+        </div>
+    </header>
+
+    <nav class="bg-white shadow">
+        <div class="container mx-auto p-4 flex space-x-4">
+            <a href="/" class="text-gray-600 hover:text-blue-700">Inicio</a>
+            <a href="/model_info" class="text-gray-600 hover:text-blue-700">Información del Modelo</a>
+            <a href="/visualizations" class="font-semibold text-blue-700 hover:text-blue-900">Visualizaciones</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-8 px-4">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Análisis Visual de Datos</h2>
+            <p class="mb-4">
+                Los siguientes gráficos muestran insights importantes sobre los factores que influyen en los precios
+                de las laptops en el mercado actual. Estas visualizaciones ayudan a entender mejor las relaciones entre
+                diversas características y su impacto en los precios finales.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Scatter Plot Card -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden visualization-card">
+                <div class="p-4">
+                    <h3 class="text-xl font-bold mb-2">Relación RAM y Precio</h3>
+                    <p class="text-gray-600 mb-4">Correlación entre memoria RAM y precio final</p>
+                </div>
+                <img src="/static/visualizations/ram_vs_price.png" alt="Relación RAM y Precio" class="w-full h-64 object-contain bg-gray-50 viz-img" onclick="openModal(this)">
+                <div class="p-4 bg-gray-50 border-t">
+                    <p class="text-sm text-gray-700">El aumento en la memoria RAM está directamente correlacionado con precios más elevados</p>
+                </div>
+            </div>
+
+            <!-- Bar Plot Card -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden visualization-card">
+                <div class="p-4">
+                    <h3 class="text-xl font-bold mb-2">Laptops Gaming vs No Gaming</h3>
+                    <p class="text-gray-600 mb-4">Comparación de precios promedio por categoría</p>
+                </div>
+                <img src="/static/visualizations/price_by_type.png" alt="Laptops Gaming vs No Gaming" class="w-full h-64 object-contain bg-gray-50 viz-img" onclick="openModal(this)">
+                <div class="p-4 bg-gray-50 border-t">
+                    <p class="text-sm text-gray-700">Las laptops gaming tienen un precio promedio significativamente más alto</p>
+                </div>
+            </div>
+
+            <!-- Histogram Plot Card -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden visualization-card">
+                <div class="p-4">
+                    <h3 class="text-xl font-bold mb-2">Distribución de Precios</h3>
+                    <p class="text-gray-600 mb-4">Frecuencia de laptops por rango de precios</p>
+                </div>
+                <img src="/static/visualizations/price_distribution.png" alt="Distribución de Precios" class="w-full h-64 object-contain bg-gray-50 viz-img" onclick="openModal(this)">
+                <div class="p-4 bg-gray-50 border-t">
+                    <p class="text-sm text-gray-700">La mayoría de laptops se concentran en el rango medio de precios, con poca representación en los extremos</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Conclusiones del Análisis Visual</h2>
+            <ul class="list-disc pl-5 space-y-2">
+                <li>La RAM es uno de los factores más determinantes en el precio final de una laptop</li>
+                <li>Las laptops orientadas a gaming tienen un precio promedio significativamente mayor</li>
+                <li>La distribución de precios muestra un sesgo hacia la derecha, con la mayoría de modelos en rangos medios</li>
+                <li>Estos insights son útiles tanto para compradores que desean optimizar su presupuesto como para vendedores que buscan estrategias de precios efectivas</li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Modal/Lightbox -->
+    <div id="imageModal" class="modal">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="expandedImg">
+        <div id="modalCaption" class="modal-caption"></div>
+    </div>
+
+    <footer class="gradient-bg text-white py-8 mt-8">
+        <div class="container mx-auto px-4">
+            <p class="text-center opacity-80"></p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for modal/lightbox functionality -->
+    <script>
+        function openModal(img) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("expandedImg");
+            const captionText = document.getElementById("modalCaption");
+
+            // Show the modal
+            modal.classList.add("show");
+
+            // Set the image source and alt text
+            modalImg.src = img.src;
+            captionText.innerHTML = img.alt;
+
+            // Disable scroll on body
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("imageModal");
+
+            // Hide the modal with animation
+            modal.classList.remove("show");
+
+            // Re-enable scrolling
+            document.body.style.overflow = "";
+        }
+
+        // Close modal when clicking outside the image
+        document.getElementById("imageModal").addEventListener("click", function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
