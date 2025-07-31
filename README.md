@@ -1,3 +1,5 @@
+<div align="center">
+
 # 💻 Laptop Price Predictor - Interactive ML Dashboard
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect%20with%20Victor-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/victorcabrejos/)
@@ -7,6 +9,10 @@
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![MLOps](https://img.shields.io/badge/MLOps-Ready-brightgreen)](https://github.com/VictorCabrejos)
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-success)](https://github.com/VictorCabrejos)
+
+## *Advanced Machine Learning • Interactive Dashboards • Production-Ready MLOps*
+
+</div>
 
 > **A sophisticated machine learning web application that predicts laptop prices with interactive visualizations and real-time model comparison. Built for e-commerce platforms, procurement teams, and data-driven decision making.**
 
