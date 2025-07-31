@@ -1,4 +1,6 @@
 __pycache__/
+docs/tareas/
+**/tareas/
 docs/tareas/solutions/
 **/solutions/
 .env
