@@ -1,5 +1,7 @@
 # 💻 Laptop Price Predictor - Interactive ML Dashboard
 
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect%20with%20Victor-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/victorcabrejos/)
+
 [![Python](https://img.shields.io/badge/python-v3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
@@ -327,8 +329,7 @@ black . && flake8 .
 ## 📞 **Contact & Support**
 
 **Victor Cabrejos** - ML Engineer & Full-Stack Developer
-- 📧 **Email**: victor.cabrejos@example.com
-- 💼 **LinkedIn**: [linkedin.com/in/victorcabrejos](https://linkedin.com/in/victorcabrejos)
+-  **LinkedIn**: [linkedin.com/in/victorcabrejos](https://www.linkedin.com/in/victorcabrejos/)
 - 🐙 **GitHub**: [github.com/VictorCabrejos](https://github.com/VictorCabrejos)
 - 🌐 **Portfolio**: [victorcabrejos.dev](https://victorcabrejos.dev)
 
